@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rastreamento de Pedido</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .tracking-id {
+      font-size: 14px;
+      margin-bottom: 5px;
+      color: #666;
+    }
+
+    .delivery-estimate {
+      font-size: 15px;
+      color: #28a745;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
+    .step {
+      position: relative;
+      padding-left: 40px;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+
+    .step:before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 5px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #ccc;
+      z-index: 1;
+    }
+
+    .step.active:before {
+      background: #28a745;
+    }
+
+    .step:after {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 25px;
+      height: 100%;
+      width: 2px;
+      background: #ccc;
+      z-index: 0;
+    }
+
+    .step:last-child:after {
+      display: none;
+    }
+
+    .step p {
+      margin: 0;
+      color: #555;
+    }
+
+    .step.active p {
+      font-weight: bold;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Rastreamento do Pedido</h1>
+    <div class="tracking-id">Pedido #123456789</div>
+    <div class="delivery-estimate">🕒 Previsão de entrega: <strong>25/04/2025</strong></div>
+
+    <div class="step active">
+      <p>Pedido Recebido</p>
+    </div>
+    <div class="step active">
+      <p>Processando</p>
+    </div>
+    <div class="step active">
+      <p>Enviado</p>
+    </div>
+    <div class="step">
+      <p>Em Transporte</p>
+    </div>
+    <div class="step">
+      <p>Entregue</p>
+    </div>
+  </div>
+
+</body>
+</html>
