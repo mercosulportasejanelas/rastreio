@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Rastreamento de Pedido</title>
   <style>
     body {
@@ -23,7 +23,33 @@
 
     h1 {
       color: #333;
+      margin-bottom: 20px;
+    }
+
+    .input-area {
+      margin-bottom: 30px;
+    }
+
+    input {
+      padding: 10px;
+      width: 70%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
       margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
     }
 
     .tracking-id {
@@ -44,6 +70,9 @@
       padding-left: 40px;
       margin-bottom: 30px;
       text-align: left;
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: fadeIn 0.5s forwards;
     }
 
     .step:before {
@@ -86,34 +115,130 @@
       font-weight: bold;
       color: #000;
     }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .not-found {
+      color: red;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .loader {
+      display: none;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #28a745;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 2s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>Rastreamento do Pedido</h1>
-    <div class="tracking-id">Pedido #22653 </div>
-    <div class="delivery-estimate">🕒 Previsão de entrega: <strong>02/05/2025</strong></div>
+    <h1>Rastreamento de Pedido</h1>
 
-    <div class="step active">
-      <p>Pedido Recebido</p>
+    <div class="input-area">
+      <input type="text" id="inputBusca" placeholder="Digite o número do pedido ou CPF" />
+      <br>
+      <button onclick="buscarPedido()">Buscar</button>
     </div>
-    <div class="step active">
-      <p>Processando</p>
+
+    <div class="loader" id="loader"></div>
+
+    <div id="infoPedido" style="display:none;">
+      <div class="tracking-id" id="numeroPedido"></div>
+      <div class="delivery-estimate" id="previsaoEntrega"></div>
+      <div id="etapas"></div>
     </div>
-    <div class="step active">
-      <p>Em Produção</p>
-    </div>
-    <div class="step">
-      <p>Enviado</p>
-    </div>
-    <div class="step">
-      <p>Em Transporte</p>
-    </div>
-    <div class="step">
-      <p>Entregue</p>
-    </div>
+
+    <div class="not-found" id="erroBusca" style="display:none;">Pedido não encontrado.</div>
   </div>
+
+  <script>
+    const pedidos = {
+      "22263": {
+        cpf: "06062344973",
+        dataEntrega: "02/05/2025",
+        etapas: [
+          "Pedido Recebido",
+          "Processando",
+          "Em Produção",
+          "Enviado",
+          "Em Transporte",
+          "Entregue"
+        ],
+        statusAtual: 2
+      },
+      "987654321": {
+        cpf: "98765432100",
+        dataEntrega: "27/04/2025",
+        etapas: [
+          "Pedido Recebido",
+          "Processando",
+          "Em Produção",
+          "Enviado",
+          "Em Transporte",
+          "Entregue"
+        ],
+        statusAtual: 5
+      }
+    };
+
+    function buscarPedido() {
+      const busca = document.getElementById("inputBusca").value.trim();
+      const loader = document.getElementById("loader");
+      loader.style.display = "block";
+      
+      setTimeout(() => {
+        const pedido = Object.entries(pedidos).find(([numero, dados]) =>
+          numero === busca || dados.cpf === busca
+        );
+
+        const infoPedido = document.getElementById("infoPedido");
+        const erroBusca = document.getElementById("erroBusca");
+        const numeroPedido = document.getElementById("numeroPedido");
+        const previsaoEntrega = document.getElementById("previsaoEntrega");
+        const etapasDiv = document.getElementById("etapas");
+
+        loader.style.display = "none";
+
+        if (pedido) {
+          const [numero, dados] = pedido;
+          infoPedido.style.display = "block";
+          erroBusca.style.display = "none";
+
+          numeroPedido.innerText = `Pedido #${numero}`;
+          previsaoEntrega.innerHTML = `🕒 Previsão de entrega: <strong>${dados.dataEntrega}</strong>`;
+
+          etapasDiv.innerHTML = "";
+          dados.etapas.forEach((etapa, index) => {
+            const step = document.createElement("div");
+            step.className = "step" + (index <= dados.statusAtual ? " active" : "");
+            step.innerHTML = `<p>${etapa}</p>`;
+            etapasDiv.appendChild(step);
+          });
+        } else {
+          infoPedido.style.display = "none";
+          erroBusca.style.display = "block";
+        }
+      }, 1000); // Simula o tempo de busca
+    }
+  </script>
 
 </body>
 </html>
